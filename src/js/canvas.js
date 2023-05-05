@@ -13,13 +13,10 @@ const mouse = {
 
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']
 
-var gravity = 1
-const friction = 0.7
-
 // Event Listeners
-addEventListener('mousemove', (e) => {
-  mouse.x = e.clientX
-  mouse.y = e.clientY
+addEventListener('mousemove', (event) => {
+  mouse.x = event.clientX
+  mouse.y = event.clientY
 })
 
 addEventListener('resize', () => {
@@ -29,17 +26,18 @@ addEventListener('resize', () => {
   init()
 })
 
-addEventListener('click', () => {
-  init()
-})
+function getDistance(x1, y1, x2, y2) {
+  let xDistance = x2 - x1
+  let yDistance = y2 - y1
+
+  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
+}
 
 // Objects
-class Ball {
-  constructor(x, y, dx, dy, radius, color) {
+class Circle {
+  constructor(x, y, radius, color) {
     this.x = x
     this.y = y
-    this.dx = dx
-    this.dy = dy
     this.radius = radius
     this.color = color
   }
@@ -47,45 +45,30 @@ class Ball {
   draw() {
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    // c.strokeStyle = 'white'
-    c.lineWidth = 2
-    c.stroke()
     c.fillStyle = this.color
     c.fill()
     c.closePath()
   }
 
   update() {
-    if (this.y + this.radius + this.dy > canvas.height) {
-      this.dy = -this.dy * friction
-    } else {
-      this.dy += gravity
-    }
-
-    if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius <= 0) {
-      this.dx = -this.dx
-    }
-
-    this.x += this.dx
-    this.y += this.dy
-
     this.draw()
   }
 }
 
 // Implementation
-let ballArray
+
+let circle1
+let circle2
+let objects
 function init() {
-  ballArray = []
+  objects = []
 
   for (let i = 0; i < 400; i++) {
-    var radius = utils.randomIntFromRange(8, 20)
-    var x = utils.randomIntFromRange(radius, canvas.width - radius)
-    var y = utils.randomIntFromRange(0, canvas.height - radius)
-    var dx = utils.randomIntFromRange(-2, 2)
-    var dy = utils.randomIntFromRange(-2, 2)
-    ballArray.push(new Ball(x, y, dx, dy, radius, utils.randomColor(colors)))
+    // objects.push()
   }
+
+  circle1 = new Circle(innerWidth / 2, innerHeight / 2, 100, 'black')
+  circle2 = new Circle(50, 50, 30, 'red')
 }
 
 // Animation Loop
@@ -93,9 +76,22 @@ function animate() {
   requestAnimationFrame(animate)
   c.clearRect(0, 0, canvas.width, canvas.height)
 
-  ballArray.forEach(ball => {
-    ball.update()
-  })
+  circle1.update()
+
+  circle2.x = mouse.x
+  circle2.y = mouse.y
+  circle2.update()
+
+  if (getDistance(circle1.x, circle1.y, circle2.x, circle2.y) < circle1.radius + circle2.radius) {
+    circle1.color = 'red'
+  } else {
+    circle1.color = 'black'
+  }
+
+  // c.fillText('HTML CANVAS BOILERPLATE', mouse.x, mouse.y)
+  // objects.forEach(object => {
+  //  object.update()
+  // })
 }
 
 init()
