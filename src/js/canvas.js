@@ -27,97 +27,63 @@ addEventListener('resize', () => {
 })
 
 // Objects
-class Particle {
+class Object {
   constructor(x, y, radius, color) {
     this.x = x
     this.y = y
-    this.velocity = {
-      x: utils.randomIntFromRange(-2.5, 2.5),
-      y: utils.randomIntFromRange(-2.5, 2.5)
-    }
     this.radius = radius
-    this.color = utils.randomColor(colors)
-    this.mass = 1
-    this.opacity = 0
+    this.color = color
   }
 
   draw() {
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    c.save()
-    c.globalAlpha = this.opacity
     c.fillStyle = this.color
     c.fill()
-    c.restore()
-    c.strokeStyle = this.color
-    c.stroke()
     c.closePath()
   }
 
-  update(particles) {
+  update() {
     this.draw()
-
-    for (let i = 0; i < particles.length; i++) {
-      if (this === particles[i]) continue
-
-      if (utils.distance(this.x, this.y, particles[i].x, particles[i].y) - this.radius * 2 < 0) {
-        utils.resolveCollision(this, particles[i])
-      }
-    }
-
-    if (this.x - this.radius <= 0 || this.x + this.radius >= canvas.width) {
-      this.velocity.x = -this.velocity.x
-    }
-    if (this.y - this.radius <= 0 || this.y + this.radius >= canvas.height) {
-      this.velocity.y = -this.velocity.y
-    }
-
-    // mouse collision detection
-    if (utils.distance(mouse.x, mouse.y, this.x, this.y) < 120 && this.opacity < .2) {
-      this.opacity += .02
-    } else if (this.opacity > 0) {
-      this.opacity -= .02
-      this.opacity = Math.max(0, this.opacity)
-    }
-
-    this.x += this.velocity.x
-    this.y += this.velocity.y
   }
 }
 
 // Implementation
-let particles
-const init = () => {
-  particles = []
+let objects
+function init() {
+  objects = []
 
-  for (let i = 0; i < 300; i++) {
-    var radius = 15
-    var x = utils.randomIntFromRange(radius, canvas.width - radius)
-    var y = utils.randomIntFromRange(radius, canvas.height - radius)
-    var color = 'blue'
-
-    if (i !== 0) {
-      for (let j = 0; j < particles.length; j++) {
-        if (utils.distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
-          x = utils.randomIntFromRange(radius, canvas.width - radius)
-          y = utils.randomIntFromRange(radius, canvas.height - radius)
-          j = -1
-        }
-      }
-    }
-
-    particles.push(new Particle(x, y, radius, color))
+  for (let i = 0; i < 400; i++) {
+    // objects.push()
   }
 }
 
 // Animation Loop
-const animate = () => {
+function animate() {
   requestAnimationFrame(animate)
   c.clearRect(0, 0, canvas.width, canvas.height)
 
-  particles.forEach(particle => {
-    particle.update(particles)
-  })
+  c.fillStyle = '#1a1a23'
+  c.fillRect(0, 0, canvas.width, canvas.height)
+
+  if (
+    mouse.x + 100 >= canvas.width / 2 - 50 &&
+    mouse.x <= canvas.width / 2 + 50 &&
+    mouse.y + 100 >= canvas.height / 2 - 50 &&
+    mouse.y <= canvas.height / 2 + 50
+  ) {
+    console.log('first')
+  }
+
+  c.fillStyle = '#e86262'
+  c.fillRect(mouse.x, mouse.y, 100, 100)
+
+  c.fillStyle = '#92abea'
+  c.fillRect(canvas.width / 2 - 50, canvas.height / 2 - 50, 100, 100)
+
+  // objects.forEach(object => {
+  //  object.update()
+  // })
 }
 
 init()

@@ -124,107 +124,63 @@ addEventListener('resize', function () {
   init();
 }); // Objects
 
-var Particle = /*#__PURE__*/function () {
-  function Particle(x, y, radius, color) {
-    _classCallCheck(this, Particle);
+var _Object = /*#__PURE__*/function () {
+  function Object(x, y, radius, color) {
+    _classCallCheck(this, Object);
 
     this.x = x;
     this.y = y;
-    this.velocity = {
-      x: _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomIntFromRange(-2.5, 2.5),
-      y: _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomIntFromRange(-2.5, 2.5)
-    };
     this.radius = radius;
-    this.color = _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomColor(colors);
-    this.mass = 1;
-    this.opacity = 0;
+    this.color = color;
   }
 
-  _createClass(Particle, [{
+  _createClass(Object, [{
     key: "draw",
     value: function draw() {
       c.beginPath();
       c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-      c.save();
-      c.globalAlpha = this.opacity;
       c.fillStyle = this.color;
       c.fill();
-      c.restore();
-      c.strokeStyle = this.color;
-      c.stroke();
       c.closePath();
     }
   }, {
     key: "update",
-    value: function update(particles) {
+    value: function update() {
       this.draw();
-
-      for (var i = 0; i < particles.length; i++) {
-        if (this === particles[i]) continue;
-
-        if (_utils__WEBPACK_IMPORTED_MODULE_0___default.a.distance(this.x, this.y, particles[i].x, particles[i].y) - this.radius * 2 < 0) {
-          _utils__WEBPACK_IMPORTED_MODULE_0___default.a.resolveCollision(this, particles[i]);
-        }
-      }
-
-      if (this.x - this.radius <= 0 || this.x + this.radius >= canvas.width) {
-        this.velocity.x = -this.velocity.x;
-      }
-
-      if (this.y - this.radius <= 0 || this.y + this.radius >= canvas.height) {
-        this.velocity.y = -this.velocity.y;
-      } // mouse collision detection
-
-
-      if (_utils__WEBPACK_IMPORTED_MODULE_0___default.a.distance(mouse.x, mouse.y, this.x, this.y) < 120 && this.opacity < .2) {
-        this.opacity += .02;
-      } else if (this.opacity > 0) {
-        this.opacity -= .02;
-        this.opacity = Math.max(0, this.opacity);
-      }
-
-      this.x += this.velocity.x;
-      this.y += this.velocity.y;
     }
   }]);
 
-  return Particle;
+  return Object;
 }(); // Implementation
 
 
-var particles;
+var objects;
 
-var init = function init() {
-  particles = [];
+function init() {
+  objects = [];
 
-  for (var i = 0; i < 300; i++) {
-    var radius = 15;
-    var x = _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomIntFromRange(radius, canvas.width - radius);
-    var y = _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomIntFromRange(radius, canvas.height - radius);
-    var color = 'blue';
-
-    if (i !== 0) {
-      for (var j = 0; j < particles.length; j++) {
-        if (_utils__WEBPACK_IMPORTED_MODULE_0___default.a.distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
-          x = _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomIntFromRange(radius, canvas.width - radius);
-          y = _utils__WEBPACK_IMPORTED_MODULE_0___default.a.randomIntFromRange(radius, canvas.height - radius);
-          j = -1;
-        }
-      }
-    }
-
-    particles.push(new Particle(x, y, radius, color));
+  for (var i = 0; i < 400; i++) {// objects.push()
   }
-}; // Animation Loop
+} // Animation Loop
 
 
-var animate = function animate() {
+function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(function (particle) {
-    particle.update(particles);
-  });
-};
+  c.fillStyle = '#1a1a23';
+  c.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (mouse.x + 100 >= canvas.width / 2 - 50 && mouse.x <= canvas.width / 2 + 50 && mouse.y + 100 >= canvas.height / 2 - 50 && mouse.y <= canvas.height / 2 + 50) {
+    console.log('first');
+  }
+
+  c.fillStyle = '#e86262';
+  c.fillRect(mouse.x, mouse.y, 100, 100);
+  c.fillStyle = '#92abea';
+  c.fillRect(canvas.width / 2 - 50, canvas.height / 2 - 50, 100, 100); // objects.forEach(object => {
+  //  object.update()
+  // })
+}
 
 init();
 animate();
